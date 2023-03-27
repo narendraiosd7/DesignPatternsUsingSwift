@@ -8,7 +8,7 @@ import UIKit
 /// The existing object is called as "Prototype" and copied object is called as "Clone".
 /// Structs by defaults having this pattern but class objects does not having this.
 
-class Student {
+class Student: NSObject, NSCopying {
     var name: String
     var rollNo: Int
     
@@ -17,13 +17,13 @@ class Student {
         self.rollNo = rollNo
     }
     
-    func copy() -> Student {
+    func copy(with zone: NSZone? = nil) -> Any {
         return Student(name: self.name, rollNo: self.rollNo)
     }
 }
 
 let student1 = Student(name: "Abhi", rollNo: 01)
-let student2 = student1.copy()
+let student2 = student1.copy() as? Student
 
 student1.name = "Ram"
 student1.rollNo = 02
@@ -31,5 +31,5 @@ student1.rollNo = 02
 print(student1.name)
 print(student1.rollNo)
 
-print(student2.name)
-print(student2.rollNo)
+print(student2?.name ?? "")
+print(student2?.rollNo ?? 0)
