@@ -35,7 +35,14 @@ print(student2?.name ?? "")
 print(student2?.rollNo ?? 0)
 
 // shallow copy:
-/// It is default copy. A copy of a class object is a shallow copy. Shallow copies are faster than deep copy, because of sharing the reference only. The created copy doesn't entirely create a new instance in memory, just address/reference is copied. As reference is shared, value change in a copy changes all the other.
+
+/*
+ With a shallow copy, any object pointed to by the source is also pointed to by the destination. So only one object will be created in the memory. A copy of a class object is a shallow copy.
+
+ Shallow copies are faster than deep copy, because of sharing the reference only. The created copy doesn’t entirely create a new instance in memory, just address/reference is copied.
+
+ As reference is shared, value change in a copy changes all the other. So in race condition and multi-thread issues, a shallow copy is risky.
+ */
 
 class Meeting: NSObject, NSCopying {
     var name: String
@@ -66,5 +73,53 @@ meeting.location.place = "New York"
 
 print(meeting.location.place)
 print(clone?.location.place ?? "")
+
+// Deep Copy:
+
+/*
+ A deep copy is the value type of copy. When a structure is copied, it is deep type copy.
+
+ Deep Copy duplicates everything. With a deep copy, any object pointed to by the source is copied and the copy is pointed to by the destination.
+
+ In the case of a race condition and multi-thread issue, there is no worry about impacting other copy while changing in a copy. In a deep copy, there are multiple copies and there is no relation among the copies.
+
+ Deep Copy is slower than Shallow Copy.
+ */
+
+
+class WWDCMeeting: NSObject, NSCopying {
+    var name: String
+    var meetLocation: MeetLocation
+    
+    init(name: String, meetLocation: MeetLocation) {
+        self.name = name
+        self.meetLocation = meetLocation
+    }
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        let location = self.meetLocation.copy() as! MeetLocation
+        return WWDCMeeting(name: self.name, meetLocation: location)
+    }
+}
+
+class MeetLocation: NSObject, NSCopying {
+    var place: String
+    
+    init(place: String) {
+        self.place = place
+    }
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        return MeetLocation(place: self.place)
+    }
+}
+
+let wwdcMeeting = WWDCMeeting(name: "WWDC", meetLocation: MeetLocation(place: "canada"))
+let clonedMeet = wwdcMeeting.copy() as? WWDCMeeting
+
+wwdcMeeting.meetLocation.place = "New York"
+
+print(wwdcMeeting.meetLocation.place)
+print(clonedMeet?.meetLocation.place ?? "")
 
 
