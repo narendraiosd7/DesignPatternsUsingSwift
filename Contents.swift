@@ -33,3 +33,38 @@ print(student1.rollNo)
 
 print(student2?.name ?? "")
 print(student2?.rollNo ?? 0)
+
+// shallow copy:
+/// It is default copy. A copy of a class object is a shallow copy. Shallow copies are faster than deep copy, because of sharing the reference only. The created copy doesn't entirely create a new instance in memory, just address/reference is copied. As reference is shared, value change in a copy changes all the other.
+
+class Meeting: NSObject, NSCopying {
+    var name: String
+    var location: Location
+    
+    init(name: String, location: Location) {
+        self.name = name
+        self.location = location
+    }
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        return Meeting(name: self.name, location: self.location)
+    }
+}
+
+class Location {
+    var place: String
+    
+    init(place: String) {
+        self.place = place
+    }
+}
+
+let meeting = Meeting(name: "WWDC", location: Location(place: "canada"))
+let clone = meeting.copy() as? Meeting
+
+meeting.location.place = "New York"
+
+print(meeting.location.place)
+print(clone?.location.place ?? "")
+
+
